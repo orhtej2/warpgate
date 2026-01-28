@@ -67,19 +67,20 @@ jobs:
       - name: Install tools
         run: |
           cargo install --locked just
+          cargo install --locked cargo-deny@${{ env.cargo-deny-version }}
           cargo install --locked cargo-cyclonedx@^0.5
           rm -rf ~/.cargo/registry
 
-      - name: Install just
-        run: |
-          wget https://github.com/casey/just/releases/download/${{ env.just-version }}/just-${{ env.just-version }}-${{ matrix.tools-target }}.tar.gz -O just.tar.gz
-          tar xf just.tar.gz
+      #- name: Install just
+      #  run: |
+      #    wget https://github.com/casey/just/releases/download/${{ env.just-version }}/just-${{ env.just-version }}-${{ matrix.tools-target }}.tar.gz -O just.tar.gz
+      #    tar xf just.tar.gz
 
-      - name: Install cargo-deny
-        run: |
-          wget https://github.com/EmbarkStudios/cargo-deny/releases/download/${{ env.cargo-deny-version }}/cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.tools-target }}.tar.gz -O cargo-deny.tar.gz
-          tar xf cargo-deny.tar.gz
-          mv cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.tools-target }}/cargo-deny .
+      #- name: Install cargo-deny
+      #  run: |
+      #    wget https://github.com/EmbarkStudios/cargo-deny/releases/download/${{ env.cargo-deny-version }}/cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.tools-target }}.tar.gz -O cargo-deny.tar.gz
+      #    tar xf cargo-deny.tar.gz
+      #    mv cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.tools-target }}/cargo-deny .
 
       - name: Install CycloneDX
         run: |
@@ -94,8 +95,8 @@ jobs:
 
       - name: cargo-deny
         run: |
-          ./cargo-deny --version
-          ./cargo-deny check
+          cargo deny --version
+          cargo deny check
 
       - name: Install admin UI deps
         run: |
@@ -103,11 +104,11 @@ jobs:
 
       - name: Build admin UI
         run: |
-          ./just npm run build
+          just npm run build
 
       - name: Generate admin UI BOM
         run: |
-          ./just npm prune
+          just npm prune
           cd warpgate-web && NODE_ENV=dev cyclonedx-npm --output-format xml > ../cdx/admin-ui.cdx.xml
 
       - name: Build
