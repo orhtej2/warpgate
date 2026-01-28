@@ -17,21 +17,25 @@ jobs:
             os: ubuntu-22.04
             cyclonedx-build: cyclonedx-linux-x64
             cargo-cross: false
+            tools-target: x86_64-unknown-linux-musl
           - arch: arm64-linux
             target: aarch64-unknown-linux-gnu
             os: ubuntu-22.04-arm
             cyclonedx-build: cyclonedx-linux-arm64
             cargo-cross: false
+            tools-target: aarch64-unknown-linux-musl
           - arch: x86_64-macos
             target: x86_64-apple-darwin
             os: macos-latest
             cyclonedx-build: cyclonedx-osx-x64
             cargo-cross: false
+            tools-target: x86_64-apple-darwin
           - arch: arm64-macos
             target: aarch64-apple-darwin
             os: macos-latest
             cyclonedx-build: cyclonedx-osx-arm64
             cargo-cross: true
+            tools-target: aarch64-apple-darwin
       fail-fast: false
 
     name: Build (${{ matrix.arch }})
@@ -73,12 +77,12 @@ jobs:
 
       - name: Install just
         run: |
-          wget https://github.com/casey/just/releases/download/${{ env.just-version }}/just-${{ env.just-version }}-${{ matrix.target }}.tar.gz -O just.tar.gz
+          wget https://github.com/casey/just/releases/download/${{ env.just-version }}/just-${{ env.just-version }}-${{ matrix.tools-target }}.tar.gz -O just.tar.gz
           tar xf just.tar.gz
 
       - name: Install cargo-deny
         run: |
-          wget https://github.com/EmbarkStudios/cargo-deny/releases/download/${{ env.cargo-deny-version }}/cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.target }}.tar.gz -O cargo-deny.tar.gz
+          wget https://github.com/EmbarkStudios/cargo-deny/releases/download/${{ env.cargo-deny-version }}/cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.tools-target }}.tar.gz -O cargo-deny.tar.gz
           tar xf cargo-deny.tar.gz
 
       - name: Install CycloneDX
