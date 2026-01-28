@@ -84,6 +84,7 @@ jobs:
         run: |
           wget https://github.com/EmbarkStudios/cargo-deny/releases/download/${{ env.cargo-deny-version }}/cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.tools-target }}.tar.gz -O cargo-deny.tar.gz
           tar xf cargo-deny.tar.gz
+          mv cargo-deny-${{ env.cargo-deny-version }}-${{ matrix.tools-target }}/cargo-deny .
 
       - name: Install CycloneDX
         run: |
@@ -98,8 +99,8 @@ jobs:
 
       - name: cargo-deny
         run: |
-          ./cargo-deny --version
-          ./cargo-deny check
+          cargo deny --version
+          cargo deny check
 
       - name: Install admin UI deps
         run: |
