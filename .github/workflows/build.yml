@@ -6,17 +6,20 @@ on: [push, pull_request]
 
 jobs:
   build:
+    env:
+      just-version: 1.46.0
+      cargo-deny-version: 0.18.9
     strategy:
       matrix:
         include:
           - arch: x86_64-linux
             target: x86_64-unknown-linux-gnu
-            os: ubuntu-24.04
+            os: ubuntu-22.04
             cyclonedx-build: cyclonedx-linux-x64
             cargo-cross: false
           - arch: arm64-linux
             target: aarch64-unknown-linux-gnu
-            os: ubuntu-24.04-arm
+            os: ubuntu-22.04-arm
             cyclonedx-build: cyclonedx-linux-arm64
             cargo-cross: false
           - arch: x86_64-macos
@@ -50,23 +53,19 @@ jobs:
 
       - uses: rlespinasse/github-slug-action@6f7a8d2348e2a4aa5defafcdaafe5aef3f83bd4b
 
-      - uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af
-        with:
-          target: ${{ matrix.target }}
-          override: true
-
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5
-        with:
-          key: "build"
-
       - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
         with:
           node-version: 24
 
+      - name: Setup Rust
+        run: |
+          rustup target add ${{ matrix.target }}
+          rustup toolchain install
+
       - name: Install tools
         run: |
-          cargo install --locked just
-          cargo install --locked cargo-deny@0.18.9
+          cargo install --locked just@${{ env.just-version }}
+          cargo install --locked cargo-deny@${{ env.cargo-deny-version }}
           cargo install --locked cargo-cyclonedx@^0.5
           rm -rf ~/.cargo/registry
 
